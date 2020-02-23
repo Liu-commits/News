@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="copyright" content="All Rights Reserved, Copyright (C) 2013, 猿来入此, Ltd." />
+<meta name="copyright" content="All Rights Reserved, Copyright (C) 2013, LiuYouQuan, Ltd." />
 <title>后台管理主页</title>
 <link rel="stylesheet" type="text/css" href="../resources/admin/easyui/easyui/1.3.4/themes/default/easyui.css" />
 <link rel="stylesheet" type="text/css" href="../resources/admin/easyui/css/wu.css" />
@@ -68,7 +68,7 @@
     <!-- end of main --> 
     <!-- begin of footer -->
 	<div class="wu-footer" data-options="region:'south',border:true,split:true">
-    	&copy; 2018 【猿来入此】 All Rights Reserved
+    	&copy; 2020 【LiuYouQuan】 All Rights Reserved
     </div>
     <!-- end of footer -->  
     <script type="text/javascript">
