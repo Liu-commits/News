@@ -37,6 +37,11 @@ public class NewsCategoryServiceImpl implements NewsCategoryService {
     }
 
     @Override
+    public List<NewsCategory> findAll() {
+        return newsCategoryDao.findAll();
+    }
+
+    @Override
     public int getTotal(Map<String, Object> queryMap) {
         return newsCategoryDao.getTotal(queryMap);
     }

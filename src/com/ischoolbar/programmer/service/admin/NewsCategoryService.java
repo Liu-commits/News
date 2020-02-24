@@ -15,6 +15,7 @@ public interface NewsCategoryService {
     public int edit(NewsCategory newsCategory);
     public int delete(long id);
     public List<NewsCategory> findList(Map<String,Object> queryMap);
+    public List<NewsCategory> findAll();
     public int getTotal(Map<String,Object> queryMap);
 
 

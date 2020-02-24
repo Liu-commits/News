@@ -14,7 +14,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * 新闻分类控制器
@@ -30,6 +29,7 @@ public class NewsCategoryController {
      */
     @RequestMapping(value = "/list",method = RequestMethod.GET)
     public ModelAndView list(ModelAndView model){
+       
         model.setViewName("news_category/list");
         return model;
     }

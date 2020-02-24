@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ischoolbar.programmer.dao.admin.NewsDao">
+
+	<!-- 添加新闻 -->
+	<insert id="add" parameterType="News">
+		insert into news(id,categoryId,title,abstrs,tags,photo,author,content,viewNumber,commentNumber,createTime) 
+		values(null,#{categoryId},#{title},#{abstrs},#{tags},#{photo},#{author},#{content},#{viewNumber},#{commentNumber},#{createTime})
+	</insert>
+	<!-- 修改新闻 -->
+	<update id="edit" parameterType="News">
+		update news set categoryId = #{categoryId} title = #{title},abstrs = #{abstrs},tags = #{tags},photo = #{photo},author = #{author},content = #{content},viewNumber = #{viewNumber},commentNumber = #{commentNumber} where id = #{id}
+	</update>
+
+	<!-- 删除新闻 -->
+	<delete id="delete" parameterType="Long">
+		delete from news where id =${value}
+	</delete>
+	<!-- 分页获取新闻列表 -->
+	<select id="findList" parameterType="Map" resultType="News">
+		select * from news where 1 = 1 
+		<if test="title != null">
+			and title like '%${title}%' 
+		</if>
+		<if test="author != null">
+			and author like '%${author}%' 
+		</if>
+		order by createTime desc 
+		<if test="offset != null and pageSize != null">
+			limit #{offset},#{pageSize} 
+		</if>
+	</select>
+	<!-- 获取符合结果的总记录数 -->
+	<select id="getTotal" parameterType="Map" resultType="Integer">
+		select count(*) from news where 1 = 1
+		<if test="title != null">
+			and title like '%${title}%' 
+		</if>
+		<if test="author != null">
+			and author like '%${author}%' 
+		</if>
+	</select>
+</mapper>
