@@ -1,6 +1,6 @@
 package com.ischoolbar.programmer.controller.admin;
 
-import com.ischoolbar.programmer.entity.admin.NewsCategory;
+import com.ischoolbar.programmer.entity.admin.News;
 import com.ischoolbar.programmer.page.admin.Page;
 import com.ischoolbar.programmer.service.admin.NewsCategoryService;
 import com.ischoolbar.programmer.service.admin.NewsService;
@@ -56,50 +56,125 @@ public class NewsController {
      */
     @RequestMapping(value = "/add",method = RequestMethod.POST)
     @ResponseBody
-    public Map<String,String> add(NewsCategory newsCategory){
+    public Map<String,String> add(News news){
         Map<String,String> ret = new HashMap<String, String>();
-        if (newsCategory == null){
+        if (news == null){
             ret.put("type","error");
             ret.put("msg","请填写正确的列表信息！");
             return ret;
         }
-        if (StringUtils.isEmpty(newsCategory.getName())){
+        if (StringUtils.isEmpty(news.getTitle())){
             ret.put("type","error");
-            ret.put("msg","列表名称不能为空！");
+            ret.put("msg","列表标题不能为空！");
             return ret;
         }
-        if (newsCategoryService.add(newsCategory) <= 0){
+        if (news.getCategoryId() == null){
+            ret.put("type","error");
+            ret.put("msg","请选择新闻分类！");
+            return ret;
+        }
+        if (StringUtils.isEmpty(news.getAbstrs())){
+            ret.put("type","error");
+            ret.put("msg","新闻摘要不能为空！");
+            return ret;
+        }
+        if (StringUtils.isEmpty(news.getTags())){
+            ret.put("type","error");
+            ret.put("msg","新闻标签不能为空！");
+            return ret;
+        }
+        if (StringUtils.isEmpty(news.getPhoto())){
+            ret.put("type","error");
+            ret.put("msg","新闻图片必须上传！");
+            return ret;
+        }
+        if (StringUtils.isEmpty(news.getAuthor())){
+            ret.put("type","error");
+            ret.put("msg","新闻作者不能为空！");
+            return ret;
+        }
+        if (StringUtils.isEmpty(news.getContent())){
+            ret.put("type","error");
+            ret.put("msg","新闻内容不能为空！");
+            return ret;
+        }
+        news.setCreateTime(new Date());
+        if (newsService.add(news) <= 0){
             ret.put("type","error");
             ret.put("msg","列表添加失败，请联系管理员！");
             return ret;
         }
+        
         ret.put("type","success");
         ret.put("msg","添加成功！");
         return ret;
     }
 
     /*
+   新闻编辑页面
+    */
+    @RequestMapping(value = "/edit",method = RequestMethod.GET)
+    public ModelAndView edit(ModelAndView model,Long id){
+        model.addObject("newsCategoryList",newsCategoryService.findAll());
+        model.addObject("news",newsService.find(id));
+        model.setViewName("news/edit");
+        return model;
+    }
+    
+    /*
     列表编辑
      */
     @RequestMapping(value = "/edit",method = RequestMethod.POST)
     @ResponseBody
-    public Map<String,String> edit(NewsCategory newsCategory){
+    public Map<String,String> edit(News news){
         Map<String,String> ret = new HashMap<String, String>();
-        if (newsCategory == null){
+        if (news == null){
             ret.put("type","error");
             ret.put("msg","请填写正确的列表信息！");
             return ret;
         }
-        if (StringUtils.isEmpty(newsCategory.getName())){
+        if (StringUtils.isEmpty(news.getTitle())){
             ret.put("type","error");
-            ret.put("msg","列表名称不能为空！");
+            ret.put("msg","列表标题不能为空！");
             return ret;
         }
-        if (newsCategoryService.edit(newsCategory) <= 0){
+        if (news.getCategoryId() == null){
             ret.put("type","error");
-            ret.put("msg","列表修改失败，请联系管理员！");
+            ret.put("msg","请选择新闻分类！");
             return ret;
         }
+        if (StringUtils.isEmpty(news.getAbstrs())){
+            ret.put("type","error");
+            ret.put("msg","新闻摘要不能为空！");
+            return ret;
+        }
+        if (StringUtils.isEmpty(news.getTags())){
+            ret.put("type","error");
+            ret.put("msg","新闻标签不能为空！");
+            return ret;
+        }
+        if (StringUtils.isEmpty(news.getPhoto())){
+            ret.put("type","error");
+            ret.put("msg","新闻图片必须上传！");
+            return ret;
+        }
+        if (StringUtils.isEmpty(news.getAuthor())){
+            ret.put("type","error");
+            ret.put("msg","新闻作者不能为空！");
+            return ret;
+        }
+        if (StringUtils.isEmpty(news.getContent())){
+            ret.put("type","error");
+            ret.put("msg","新闻内容不能为空！");
+            return ret;
+        }
+        
+        if (newsService.edit(news) <= 0){
+            ret.put("type","error");
+            ret.put("msg","新闻修改失败，请联系管理员！");
+            return ret;
+        }
+
         ret.put("type","success");
         ret.put("msg","修改成功！");
         return ret;
@@ -119,14 +194,14 @@ public class NewsController {
         }
 
         try {
-            if (newsCategoryService.delete(id) <= 0){
+            if (newsService.delete(id) <= 0){
                 ret.put("type","error");
-                ret.put("msg","列表删除失败，请联系管理员！");
+                ret.put("msg","新闻删除失败，请联系管理员！");
                 return ret;
             }
         }catch (Exception e){
             ret.put("type","error");
-            ret.put("msg","该列表下存在新闻信息，不允许删除！");
+            ret.put("msg","未知错误（可能存在评论信息），不允许删除！");
             return ret;
 
         }
@@ -141,17 +216,23 @@ public class NewsController {
     @RequestMapping(value = "/list",method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> getList(
-            @RequestParam(name = "name",required = false,defaultValue = "")String name,
+            @RequestParam(name = "title",required = false,defaultValue = "")String title,
+            @RequestParam(name = "author",required = false,defaultValue = "")String author,
+            @RequestParam(name = "categoryId",required = false)Long categoryId,
             Page page
     ){
         Map<String,Object> ret = new HashMap<String, Object>();
         Map<String,Object> queryMap = new HashMap<String, Object>();
-        queryMap.put("name",name);
+        queryMap.put("title",title);
+        queryMap.put("author",author);
+        if (categoryId != null && categoryId.longValue() != -1){
+            queryMap.put("categoryId",categoryId);
+        }
         queryMap.put("offset",page.getOffset());
         queryMap.put("pageSize",page.getRows());
 
-        ret.put("rows",newsCategoryService.findList(queryMap));
-        ret.put("total",newsCategoryService.getTotal(queryMap));
+        ret.put("rows",newsService.findList(queryMap));
+        ret.put("total",newsService.getTotal(queryMap));
         return ret;
     }
 

@@ -4,6 +4,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ischoolbar.programmer.dao.admin.NewsDao">
 
+	<!-- 多表联合查询 -->
+	<resultMap id="newsMap" type="News">
+		<result column="n_id" property="id"></result>
+		<result column="n_categoryId" property="categoryId"></result>
+		<result column="n_title" property="title"></result>
+		<result column="n_abstrs" property="abstrs"></result>
+		<result column="n_tags" property="tags"></result>
+		<result column="n_photo" property="photo"></result>
+		<result column="n_author" property="author"></result>
+		<result column="n_content" property="content"></result>
+		<result column="n_viewNumber" property="viewNumber"></result>
+		<result column="n_commentNumber" property="commentNumber"></result>
+		<result column="n_createTime" property="createTime"></result>
+		<association property="newsCategory" javaType="NewsCategory">
+			<result column="nc_id" property="id"></result>
+			<result column="nc_name" property="name"></result>
+			<result column="nc_sort" property="sort"></result>
+		</association>
+	</resultMap>
 	<!-- 添加新闻 -->
 	<insert id="add" parameterType="News">
 		insert into news(id,categoryId,title,abstrs,tags,photo,author,content,viewNumber,commentNumber,createTime) 
@@ -11,7 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</insert>
 	<!-- 修改新闻 -->
 	<update id="edit" parameterType="News">
-		update news set categoryId = #{categoryId} title = #{title},abstrs = #{abstrs},tags = #{tags},photo = #{photo},author = #{author},content = #{content},viewNumber = #{viewNumber},commentNumber = #{commentNumber} where id = #{id}
+		update news set categoryId = #{categoryId}, title = #{title},abstrs = #{abstrs},tags = #{tags},photo = #{photo},author = #{author},content = #{content} where id = #{id}
 	</update>
 
 	<!-- 删除新闻 -->
@@ -19,18 +38,40 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		delete from news where id =${value}
 	</delete>
 	<!-- 分页获取新闻列表 -->
-	<select id="findList" parameterType="Map" resultType="News">
-		select * from news where 1 = 1 
+	<select id="findList" parameterType="Map" resultMap="newsMap">
+		select n.id as n_id,n.categoryId as n_categoryId ,
+		n.title as n_title,n.abstrs as n_abstrs, 
+		n.tags as n_tags,n.photo as n_photo,
+		n.author as n_author,n.content as n_content,
+		n.viewNumber as n_viewNumber,n.commentNumber as n_commentNumber, 
+		n.createTime as n_createTime,
+		nc.id as nc_id,nc.name as nc_name,nc.sort as nc_sort 
+		from news n,news_category nc where n.categoryId = nc.id 
 		<if test="title != null">
-			and title like '%${title}%' 
+			and n.title like '%${title}%' 
 		</if>
 		<if test="author != null">
-			and author like '%${author}%' 
+			and n.author like '%${author}%' 
+		</if>
+		<if test="categoryId != null">
+			and n.categoryId = #{categoryId} 
 		</if>
 		order by createTime desc 
 		<if test="offset != null and pageSize != null">
 			limit #{offset},#{pageSize} 
 		</if>
+	</select>
+	<!-- 获取单个新闻 -->
+	<select id="find" parameterType="Long" resultMap="newsMap">
+		select n.id as n_id,n.categoryId as n_categoryId ,
+		n.title as n_title,n.abstrs as n_abstrs,
+		n.tags as n_tags,n.photo as n_photo,
+		n.author as n_author,n.content as n_content,
+		n.viewNumber as n_viewNumber,n.commentNumber as n_commentNumber,
+		n.createTime as n_createTime,
+		nc.id as nc_id,nc.name as nc_name,nc.sort as nc_sort
+		from news n,news_category nc where n.categoryId = nc.id and n.id = #{id}
+		
 	</select>
 	<!-- 获取符合结果的总记录数 -->
 	<select id="getTotal" parameterType="Map" resultType="Integer">
@@ -38,8 +79,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="title != null">
 			and title like '%${title}%' 
 		</if>
+		
 		<if test="author != null">
 			and author like '%${author}%' 
 		</if>
+		<if test="categoryId != null">
+			and categoryId = #{categoryId}
+		</if>
 	</select>
+
+	<!-- 修改新闻评论数量 -->
+	<update id="updateCommentNumber" parameterType="Long">
+		update news set commentNumber = commentNumber + 1 where id = #{id}
+	</update>
+	<!-- 修改新闻浏览数量 -->
+	<update id="updateViewNumber" parameterType="Long">
+		update news set viewNumber = viewNumber + 1 where id = #{id}
+	</update>
 </mapper>

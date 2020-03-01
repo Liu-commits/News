@@ -1,13 +1,9 @@
 package com.ischoolbar.programmer.controller.admin;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.ischoolbar.programmer.entity.admin.User;
+import com.ischoolbar.programmer.page.admin.Page;
+import com.ischoolbar.programmer.service.admin.RoleService;
+import com.ischoolbar.programmer.service.admin.UserService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,11 +14,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.ischoolbar.programmer.entity.admin.Role;
-import com.ischoolbar.programmer.entity.admin.User;
-import com.ischoolbar.programmer.page.admin.Page;
-import com.ischoolbar.programmer.service.admin.RoleService;
-import com.ischoolbar.programmer.service.admin.UserService;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 用户管理控制器
@@ -237,7 +233,7 @@ public class UserController {
 			return ret;
 		}
 		ret.put("type", "success");
-		ret.put("msg", "用户删除成功！");
+		ret.put("msg", "照片上传成功！");
 		ret.put("filepath",request.getServletContext().getContextPath() + "/resources/upload/" + filename );
 		return ret;
 	}

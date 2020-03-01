@@ -41,4 +41,19 @@ public class NewsServiceImpl implements NewsService {
     public int getTotal(Map<String, Object> queryMap) {
         return newsDao.getTotal(queryMap);
     }
+
+    @Override
+    public News find(Long id) {
+        return newsDao.find(id);
+    }
+
+    @Override
+    public int updateCommentNumber(Long id) {
+        return newsDao.updateCommentNumber(id);
+    }
+
+    @Override
+    public int updateViewNumber(Long id) {
+        return newsDao.updateCommentNumber(id);
+    }
 }

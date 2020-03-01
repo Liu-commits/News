@@ -3,8 +3,8 @@
 <%@include file="../common/header.jsp"%>
 
 <div class="easyui-panel" title="添加新闻" iconCls="icon-add" fit="true" style="width:750px " align="center" >
-    <div style="padding:20px 60px 20px 60px">
-        <form id="ff" method="post">
+    <div style="padding:10px 60px 10px 60px">
+        <form id="add-form" method="post">
             <table cellpadding="5">
                 <tr>
                     <td>新闻标题:</td>
@@ -35,7 +35,7 @@
                 <tr>
                     <td>新闻封面:</td>
                     <td >
-                        <input id="add-photo" class="wu-text easyui-textbox easyui-validatebox" type="text" value="<c:url value="/resources/upload/news-pic.jpg"/>" name="photo" readonly="readonly" data-options="required:true,missingMessage:'请上传新闻封面！'"></input>
+                        <input value="${news.photo} id="add-photo" class="wu-text easyui-textbox easyui-validatebox" type="text" placeholder="点击上传！" name="photo" readonly="readonly" data-options="required:true,missingMessage:'请上传新闻封面！'"></input>
                         <a href="javascript:void(0)" iconCls="icon-upload" class="easyui-linkbutton" onclick="uploadPhoto()">上传</a>
                         <a href="javascript:void(0)" iconCls="icon-eye" class="easyui-linkbutton" onclick="preview()">预览</a>
                     </td>
@@ -50,7 +50,7 @@
                 <tr>
                     <td>新闻内容:</td>
                     <td>
-                        <textarea id="add-content" name="content" rows="6" class="wu-textarea easyui-textbox easyui-validatebox" data-options="required:true,missingMessage:'请填写内容！'" style="width:260px"></textarea>
+                        <textarea id="add-content" name="content" rows="6" style="width:700px;height: 300px"></textarea>
                 </tr>
             </table>
         </form>
@@ -69,7 +69,7 @@
 </div>
 <input type="file" id="photo-file" style="display:none;" onchange="upload()">
 <!-- 预览图片 -->
-<div id="preview-dialog" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:330px; padding:10px;">
+<div id="preview-dialog" class="easyui-dialog" data-options="closed:true,iconCls:'icon-eye'" style="width:330px; padding:10px;">
         <table>
             <tr>
                 <td>
@@ -79,11 +79,46 @@
             </tr>
         </table>
 </div>
+<!-- 配置文件 -->
+<script type="text/javascript" src="<c:url value="/resources/admin/ueditor/ueditor.config.js"></c:url> "></script>
+<!-- 编辑器源码文件 -->
+<script type="text/javascript" src="<c:url value="/resources/admin/ueditor/ueditor.all.js"></c:url>"></script>
 <!-- End of easyui-dialog -->
 <script type="text/javascript">
+    var ue = UE.getEditor('add-content');
     function submitForm(){
-        $('#ff').form('submit');
+        var validate = $("#add-form").form("validate");
+        var content = ue.getContent();
+        if(!validate){
+            $.messager.alert("消息提醒","请检查你输入的数据!","warning");
+            return;
+        }
+        if(content == ""){
+            $.messager.alert("消息提醒","请输入新闻内容!","warning");
+            return;
+        }
+        var data = $("#add-form").serialize();
+        
+        $.ajax({
+            url: 'add',
+            type: 'post',
+            dataType:'json',
+            data:data,
+            success:function (ret) {
+                if (ret.type == 'success'){
+                    $.messager.alert("消息提醒","添加成功(sucess)","info");
+                    setTimeout(function () {
+                        window.history.go(-1);
+                    },500)
+                }else{
+                    $.messager.alert("消息提醒","ret.msg","warning");
+                }
+            }
+            
+        });
+       
     }
+    
     function clearForm(){
         $('#ff').form('clear');
     }

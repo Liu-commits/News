@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ischoolbar.programmer.dao.admin.CommentDao">
+
+	<!-- 多表联合查询 -->
+	<resultMap id="commentMap" type="Comment">
+		<result column="c_id" property="id"></result>
+		<result column="c_nickname" property="nickname"></result>
+		<result column="c_newsId" property="newsId"></result>
+		<result column="c_content" property="content"></result>
+		<result column="c_createTime" property="createTime"></result>
+		<association property="news" javaType="News">
+			<result column="n_id" property="id"></result>
+			<result column="n_categoryId" property="categoryId"></result>
+			<result column="n_title" property="title"></result>
+			<result column="n_abstrs" property="abstrs"></result>
+			<result column="n_tags" property="tags"></result>
+			<result column="n_photo" property="photo"></result>
+			<result column="n_author" property="author"></result>
+			<result column="n_content" property="content"></result>
+			<result column="n_viewNumber" property="viewNumber"></result>
+			<result column="n_commentNumber" property="commentNumber"></result>
+			<result column="n_createTime" property="createTime"></result>
+		</association>
+	</resultMap>
+	
+	
+	<!-- 添加评论 -->
+	<insert id="add" parameterType="Comment">
+		insert into comment(id,newsId,nickname,content,createTime) values(null,#{newsId},#{nickname},#{content},#{createTime})
+	</insert>
+	<!-- 修改评论 -->
+	<update id="edit" parameterType="Comment">
+		update comment set newsId = #{newsId},nickname = #{nickname},content = #{content} where id = #{id}
+	</update>
+
+	<!-- 删除评论 -->
+	<delete id="delete" parameterType="String">
+		delete from comment where id in(${value})
+	</delete>
+	<!-- 分页获取评论列表 -->
+	<select id="findList" parameterType="Map" resultMap="commentMap">
+		select n.id as n_id,n.categoryId as n_categoryId ,
+		n.title as n_title,n.abstrs as n_abstrs,
+		n.tags as n_tags,n.photo as n_photo,
+		n.author as n_author,n.content as n_content,
+		n.viewNumber as n_viewNumber,n.commentNumber as n_commentNumber,
+		n.createTime as n_createTime,
+		c.id as c_id,c.newsId as c_newId,c.nickname as c_nickname,c.newsId as c_newsId,c.content as c_content,c.createTime as c_createTime 
+		from news n,comment c where n.id = c.newsId
+		<if test="nickname != null">
+			and c.nickname like '%${nickname}%' 
+		</if>
+		<if test="content != null">
+			and c.content like '%${content}%'
+		</if>
+		order by c.createTime desc 
+		<if test="offset != null and pageSize != null">
+			limit #{offset},#{pageSize} 
+		</if>
+	</select>
+
+	<!-- 分页获取评论列表 -->
+	<select id="findAll" parameterType="Map" resultType="Comment">
+		select * from comment order by createTime asc
+		
+	</select>
+	<!-- 获取符合结果的总记录数 -->
+	<select id="getTotal" parameterType="Map" resultType="Integer">
+		select count(*) from comment where 1 = 1
+		<if test="nickname != null">
+			and nickname like '%${nickname}%' 
+		</if>
+		<if test="content != null">
+			and content like '%${content}%' 
+		</if>
+	</select>
+</mapper>
