@@ -35,7 +35,7 @@
                 <tr>
                     <td>新闻封面:</td>
                     <td >
-                        <input value="${news.photo} id="add-photo" class="wu-text easyui-textbox easyui-validatebox" type="text" placeholder="点击上传！" name="photo" readonly="readonly" data-options="required:true,missingMessage:'请上传新闻封面！'"></input>
+                        <input value="${news.photo}" id="add-photo" class="wu-text easyui-textbox easyui-validatebox" type="text" placeholder="点击上传！" name="photo" readonly="readonly" data-options="required:true,missingMessage:'请上传新闻封面！'"></input>
                         <a href="javascript:void(0)" iconCls="icon-upload" class="easyui-linkbutton" onclick="uploadPhoto()">上传</a>
                         <a href="javascript:void(0)" iconCls="icon-eye" class="easyui-linkbutton" onclick="preview()">预览</a>
                     </td>

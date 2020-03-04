@@ -61,6 +61,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			limit #{offset},#{pageSize} 
 		</if>
 	</select>
+
+	
+	<!--获取前n条新闻-->
+	<select id="findLastCommentList" parameterType="Integer" resultType="News">
+		select * from news order by commentNumber desc limit 0,#{value }
+	</select>
 	<!-- 获取单个新闻 -->
 	<select id="find" parameterType="Long" resultMap="newsMap">
 		select n.id as n_id,n.categoryId as n_categoryId ,

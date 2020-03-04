@@ -38,6 +38,11 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    public List<News> findLastCommentList(int pageSize) {
+        return newsDao.findLastCommentList(pageSize);
+    }
+
+    @Override
     public int getTotal(Map<String, Object> queryMap) {
         return newsDao.getTotal(queryMap);
     }

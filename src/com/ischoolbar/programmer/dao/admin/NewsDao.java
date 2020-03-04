@@ -19,5 +19,7 @@ public interface NewsDao {
     public News find(Long id);
     public int updateCommentNumber(Long id);
     public int updateViewNumber(Long id);
+    public List<News> findLastCommentList(int pageSize);
+    
 
 }
